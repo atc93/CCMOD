@@ -29,20 +29,48 @@ Development: https://rawgit.com/xhlulu/0acba79000a3fd1e6f552ed82edb8a64/raw/dash
   background-color: #191e27;
   padding: 0px;
   margin: auto;
+  text-align: center;
 }
 
 .banner h2 {
+  color: #FFFFFF;
+  /*margin-left: 50.0%;*/
+  display: inline-block;
+  font-family: "Raleway Medium", sans-serif;
+  font-size: 30px;
+  font-weight: bold
+}
+
+.banner h3 {
   color: #e6ecf4;
   margin-left: 1.5%;
   display: inline-block;
   font-family: "Raleway Medium", sans-serif;
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .banner img {
   padding: 0px 15px;
   margin-top: 20px;
   margin-bottom: 15px;
+}
+
+.banner2 {
+  height: 75px;
+  background-color: #191e27;
+  padding: 0px;
+  margin: auto;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.banner2 h2 {
+  color: #FFFFFF;
+  /*margin-left: 50.0%;*/
+  display: inline-block;
+  font-family: "Raleway Medium", sans-serif;
+  font-size: 25px;
+  font-weight: bold
 }
 
 /* Grid

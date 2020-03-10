@@ -48,20 +48,69 @@
 }
 
 
+.js-plotly-plot .plotly .modebar {
+    left: 31%;
+    top: 50%;
+    margin-top: 50px;
+    /*transform: translateX(-50%);*/
+}
+
+.hVEYjX {
+    background-color: red; !important
+}
 
 /* slider colors */
 
+.rc-slider-rail {
+    position: absolute;
+    width: 100%;
+    background-color: #fff;
+    height: 16px;
+}
+
 .rc-slider-track {
-  background-color: #f6ec91;
+    position: absolute;
+    left: 0;
+    height: 16px;
+    border-radius: 3px;
+    background-color: #f6ec91;
 }
 
 .rc-slider-dot-active {
   border-color: #f6ec91;
 }
+.rc-slider-mark-text {
+    top: 10px;
+    /*font-size: 20px;*/
+    margin-left: 2%; !important
+    color: #fff; !important
+}
+
+.rc-slider-mark-text-active{
+    color: #fff;
+}
+.rc-slider-dot {
+    position: absolute;
+    bottom: -20px;
+    width: 32px;
+    height: 32px;
+    border: 4px solid #e9e9e9;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
+    vertical-align: middle;
+}
 
 .rc-slider-handle {
   border-color: #f6ec91;
+  left: 13px; !important
+  height: 75px; !important
 }
+
+/*.jabYER path {
+    height: 500px; !important
+}*/
+
 
 #slider-smoothing-accuracy > div > div.rc-slider-handle {
   border-color: #f6ec91;

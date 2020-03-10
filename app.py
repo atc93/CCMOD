@@ -2,205 +2,133 @@
 import time
 
 import dash
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import dash_html_components as html
 import dash_daq as daq
-from dash.dependencies import Input, Output, State
-import utils.display as display
-
+import dash_html_components as html
 import plotly
+from dash.dependencies import Input, Output, State
+import dash_table as table
+import pandas as pd
+
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
+
+
+import utils.display as display
+import utils.xymotion as xymotion
+import utils.xymotion as tab1
+import utils.common as common
+import utils.button_readings as button_readings
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__)#, external_stylesheets=external_stylesheets)
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder="./assets")
 app.config.suppress_callback_exceptions = True
 
-def build_banner():
-    return html.Div(
-        id="banner",
-        className="banner",
-        children=[
-            html.Div(
-                id="banner-text",
-                children=[
-                    html.H2("CBPM continuous monitoring on-line display"),
-                ],
-            ),
-        ],
-    )
+# row = html.Div(
+#     [
+#         daq.Slider(
+#             id='time_window_slider',
+#             min=1,
+#             max=360,
+#             value=15,
+#             step=1,
+#             labelPosition='bottom',
+#             size=500,
+#             handleLabel={"label": "minute(s):", "showCurrentValue": True,},
+#             marks={'15': '15 minutes', '60': '1 hour', '120': '2 hours', '180': '3 hours', '360': '6 hours'},
+#             color='blue'
+#         ),
+#     ], style={'railStyle': '10px', 'margin-left': '37%', 'padding': '20px 0px 0px 0px'}
+# )
 
-def build_tabs():
-    return html.Div(
-        id="tabs",
-        className="tabs",
-        children=[
-            dcc.Tabs(
-                id="app-tabs",
-                value="tab1",
-                className="custom-tabs",
-                children=[
-                    dcc.Tab(
-                        id="tab-1",
-                        label="Trend plots",
-                        value="tab1",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                    ),
-                    dcc.Tab(
-                        id="tab-2",
-                        label="Second tab",
-                        value="tab2",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                    ),
-                    dcc.Tab(
-                        id="tab-3",
-                        label="Third tab",
-                        value="tab3",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                    ),
-                ],
-            )
-        ],
-    )
 
-def build_tab_1():
-    return [
-#        html.Div(
-#            children=[
-         html.Div(
-             className="four columns",
-             children=[
-                html.P('\nSelect time window (in minutes) of last available data to display:')
-             ],
-         ),
-         html.Div(
-             className="four columns",
-             children=[
-                 dcc.Input(id='my-id', value='15', type='text'),
-            ],
-        ),
-         html.Div(
-             className="twelve columns",
-             children=[
-                 dcc.Graph(
-                    id='live-update-graph',
-                 ),
-                 dcc.Interval(
-                     id='interval-component',
-                     interval=5*1000, # in ms
-                     n_intervals = 1
-                 )             
-            ],
-        ),
-        html.Div(
-            className="four columns",
-            children=[
-                html.P('Auto-update with fresh data switch:'),
-                daq.BooleanSwitch(
-                    id='my-daq-booleanswitch',
-                    on=True,
-                    label="Auto-update switch",
-                    labelPosition="top"
-                    )
-            ],
-        ),
-        
-    ]
-#        )
-#    ]
 
 app.layout = html.Div(
-    id="big-app-container",
-    children=[
-        build_banner(),
-        html.Div(
-            id="app-container",
-            children=[
-                build_tabs(),
-                # Main app
-                html.Div(id="app-content"),
+    [
+        common.build_navbar(),
+        common.generate_modal(),
+        # row,
+        dbc.Container(
+            [
+                dcc.Interval(
+                    id='interval-component',
+                    interval=5 * 1000,  # in ms
+                ),
+                html.Div(
+                    id="app-container",
+                    children=[
+                        html.Div(id="app-content")
+                    ]
+                )
             ],
+            # fluid=True,
         ),
-    ]
+    ],
+    style={'backgroundColor':'white'}
 )
 
 @app.callback(
     Output("app-content", "children"),
-    [Input("app-tabs", "value")]
+    [Input("demo-dropdown", 'value')]
 )
-def render_tab_content(tab_switch):
-#    print(tab_switch)
-    if tab_switch == 'tab1':
-        return build_tab_1()
+def render_menus(menu_name):
+    if menu_name == "beam_position":
+        return xymotion.build_layout()
+    elif menu_name == "button_readings":
+        return button_readings.build_layout()
 
-#@app.callback(Output(component_id='data-window-selector', component_property='children'),
-#                [Input(component_id='my-id', component_property='value')])
-#def update_output_div(input_value):
-#    return 'Enter time window (in minutes) for last available data: you have entered {} minutes'.format(input_value)
+# @app.callback(
+#     Output("app-content", "children"),
+#     [Input("app-tabs", "value")]
+# )
+# def render_tab_content(tab_switch):
+# #    print(tab_switch)
+#     if tab_switch == 'tab1':
+#         return build_tab_1()
 
-
-
-#app.layout = html.Div(children=[
-#    html.Div(
-#        [
-#        html.H2(
-#            "CBPM continuous monitoring on-line display",
-#            id="title",
-#            className="eight columns",
-#            style={"margin-left": "3%"},
-#            ),
-#        daq.LEDDisplay(
-#            id='my-LED-display',
-#            label="Default",
-#            value="15:17"
-#            ),
-#        ],
-#        className="banner",
-#        ),
-#    html.Div(
-#        children=[
-#            html.Div(id='data-window-selector'),
-#            dcc.Input(id='my-id', value='15', type='text')
-#        ],
-#        className="four columns",
-#    ),
-#    dcc.Graph(id='live-update-graph'),
-#    dcc.Interval(
-#        id='interval-component',
-#        interval=5*1000, # in ms
-#        n_intervals = 0
-#    )
-#])
-#
-#@app.callback(Output(component_id='data-window-selector', component_property='children'),
-#                [Input(component_id='my-id', component_property='value')])
-#def update_output_div(input_value):
-#    return 'Enter time window (in minutes) for last available data: you have entered {} minutes'.format(input_value)
-#
-#
-@app.callback(Output('live-update-graph', 'figure'),
-                [Input('interval-component', 'n_intervals'),
-                Input('my-id', 'value')],
-                [State('my-daq-booleanswitch','on')])
-def update(n, time, switch):
-
-
+@app.callback(
+    [Output(component_id='live_update_running', component_property='children'),
+    Output(component_id='live_update_paused', component_property='children')],
+    [Input('live_update_switch', 'on')]
+)
+def change_live_text_status(switch):
     if switch:
-        df = display.analyze(int(time))
+        return ("RUNNING", "")
+    elif not switch:
+        return ("", "PAUSED")
 
-        fig = plotly.subplots.make_subplots(rows=1, cols=1, vertical_spacing=0.2)
-#        fig['layout']['margin'] = {'l': 30, 'r': 10, 'b': 30, 't': 10}
-        fig['layout']['xaxis'].update(title='time')
-        fig['layout']['yaxis'].update(title='vertical position [micron]')
-        fig['layout']['plot_bgcolor'] = 'rgb(255, 255, 255)'
-        fig.add_trace({
-            'x': df['timestamp'],
-            'y': df['ypos'],
-        }, 1, 1)
 
-        return fig
+@app.callback([Output('cbpm_xpos', 'figure'),
+               Output('cbpm_ypos', 'figure'),
+               Output('cbpm_xres', 'figure'),
+               Output('cbpm_yres', 'figure')],
+              [Input('time_window_slider', 'value'),
+               Input('interval-component', 'n_intervals'),
+               Input('live_update_switch', 'on')],
+              [State('cbpm_xpos', 'figure'),
+               State('cbpm_ypos', 'figure'),
+               State('cbpm_xres', 'figure'),
+               State('cbpm_yres', 'figure')])
+def call_back_tab1(time, n, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres):
+    print(n, time, switch)
+    return tab1.update(n, time, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres)
+
+# ======= Callbacks for modal popup =======
+@app.callback(
+    Output("markdown", "style"),
+    [Input("learn-more-button", "n_clicks"), Input("markdown_close", "n_clicks")],
+)
+def update_click_output(button_click, close_click):
+    ctx = dash.callback_context
+
+    if ctx.triggered:
+        prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        if prop_id == "learn-more-button":
+            return {"display": "block"}
+
+    return {"display": "none"}
 
 if __name__ == '__main__':
     app.run_server(debug=True)
