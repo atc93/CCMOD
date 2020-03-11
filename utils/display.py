@@ -36,4 +36,6 @@ def analyze(n_minutes):
     # Close connection to PostgreSQL server
     psql_connection.close()
 
+    print(len(df.index))
+
     return df

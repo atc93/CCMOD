@@ -9,6 +9,7 @@ import dash_html_components as html
 import plotly
 from dash.dependencies import Input, Output, State
 import dash_table as table
+import numpy
 import pandas as pd
 
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
@@ -16,7 +17,6 @@ df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar
 
 import utils.display as display
 import utils.xymotion as xymotion
-import utils.xymotion as tab1
 import utils.common as common
 import utils.button_readings as button_readings
 
@@ -111,9 +111,20 @@ def change_live_text_status(switch):
                State('cbpm_ypos', 'figure'),
                State('cbpm_xres', 'figure'),
                State('cbpm_yres', 'figure')])
-def call_back_tab1(time, n, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres):
-    print(n, time, switch)
-    return tab1.update(n, time, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres)
+def call_back_xymotion(time, n, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres):
+    # print(n, time, switch)
+    return xymotion.update(n, time, switch, cbpm_xpos, cbpm_ypos, cbpm_xres, cbpm_yres)
+
+@app.callback([Output('button_amp', 'figure'),
+               Output('button_std', 'figure')],
+              [Input('time_window_slider', 'value'),
+               Input('interval-component', 'n_intervals'),
+               Input('live_update_switch', 'on')],
+              [State('button_amp', 'figure'),
+               State('button_std', 'figure')])
+def call_back_button_readings(time, n, switch, button_amp, button_std):
+    # print(n, time, switch)
+    return button_readings.update_plots(n, time, switch, button_amp, button_std)
 
 # ======= Callbacks for modal popup =======
 @app.callback(
